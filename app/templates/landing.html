@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Loan Eligibility App - Landing{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h1 class="text-center mb-5">Loan Eligibility App</h1>
+  <div class="row">
+    <div class="col-md-6 offset-md-3">
+      <div class="d-grid gap-2">
+        <button id="btnLoanEligibility" class="btn btn-primary btn-lg">Loan Eligibility (Sample)</button>
+        <button id="btnEligibleCustomers" class="btn btn-secondary btn-lg">Eligible Customers</button>
+        <button id="btnLoans" class="btn btn-info btn-lg">Loans</button>
+        <button id="btnCustomerLoans" class="btn btn-warning btn-lg">Customer Loans (Sample)</button>
+      </div>
+    </div>
+  </div>
+  <div id="data-output">
+    <h2>Data</h2>
+    <pre id="data-output"></pre>
+</div>
+</div>
+
+<script>
+    const accessToken = "{{ access_token }}";
+   
+  
+    document.getElementById("btnLoanEligibility").addEventListener("click", () => {
+      const customerId = prompt("Enter a customer ID:");
+      fetch(`/loan-eligibility/${customerId}`, {
+        headers: {
+          "Authorization": `Bearer ${accessToken}`
+        }
+      })
+      .then(response => response.json())
+      .then(data => displayData(data))
+      .catch(error => console.error("Error fetching loan eligibility:", error));
+    });
+  
+    document.getElementById("btnEligibleCustomers").addEventListener("click", () => {
+      fetch('/eligible_customers', {
+        headers: {
+          "Authorization": `Bearer ${accessToken}`
+        }
+      })
+      .then(response => response.json())
+      .then(data => displayData(data))
+      .catch(error => console.error("Error fetching eligible customers:", error));
+    });
+  
+    document.getElementById("btnLoans").addEventListener("click", () => {
+      fetch('/api/loans', {
+        headers: {
+          "Authorization": `Bearer ${accessToken}`
+        }
+      })
+      .then(response => response.json())
+      .then(data => displayData(data))
+      .catch(error => console.error("Error fetching loans:", error));
+    });
+  
+    document.getElementById("btnCustomerLoans").addEventListener("click", () => {
+      const customerId = prompt("Enter a customer ID:");
+      fetch('/api/customers/${customerId}/loans', {
+        headers: {
+          "Authorization": `Bearer ${accessToken}`
+        }
+      })
+      .then(response => response.json())
+      .then(data => displayData(data))
+      .catch(error => console.error("Error fetching customer loans:", error));
+    });
+
+    
+  
+    function displayData(data) {
+      const dataOutput = document.getElementById("data-output");
+      const formattedData = JSON.stringify(data, null, 2);
+      dataOutput.textContent = formattedData;
+    }
+  </script>
+  
+{% endblock %}
